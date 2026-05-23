@@ -1,0 +1,4 @@
+config
+database.sqlite
+binaryData/
+crash.journal

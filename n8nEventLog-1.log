@@ -1,0 +1,2 @@
+{"__type":"$$EventMessageAudit","id":"ff5e4557-8355-4422-bd24-2b2d9a36da68","ts":"2026-05-23T23:41:05.733+05:30","eventName":"n8n.audit.workflow.activated","message":"n8n.audit.workflow.activated","payload":{"workflowId":"R8kuJ50ZtJAdPMII","workflowName":"DPR Automation","activeVersionId":"a0d2b36c-2877-439b-8bbf-7eda0fb8267a","activationMode":"init"}}
+{"__type":"$$EventMessageConfirm","confirm":"ff5e4557-8355-4422-bd24-2b2d9a36da68","ts":"2026-05-23T23:41:05.734+05:30","source":{"id":"0","name":"eventBus"}}
