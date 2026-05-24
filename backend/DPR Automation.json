@@ -1,0 +1,154 @@
+{
+  "name": "DPR Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a professional daily report assistant. Your job is to extract information from a casual employee message and convert it into a clean, structured daily report. \n\nSTRICT RULES:\n- Output plain text only. No JSON. No markdown. No ** symbols.\n- Follow the format below EXACTLY. Do not add, rename, or remove any sections.\n- Do not repeat the same point in multiple sections.\n- Work Done = tasks performed during the day.\n- Achievements = specific wins or completions worth highlighting (must be different from Work Done).\n- Hurdles / Blockers = problems or obstacles faced.\n- Help Needed = specific requests for support from others.\n- If a section has nothing relevant, write \"None mentioned.\"\n- Extract the employee name from the message. If not mentioned, write \"Not specified.\"\n\nToday's date: {{ $now.format('DD MMM YYYY') }}\nEmployee message: {{ $json.message.text }}\n\nOutput ONLY this:\n\nDAILY REPORT\n====================\nDate: [date]\nEmployee: [name]\n\nWork Done:\n- [task 1]\n- [task 2]\n\nAchievements:\n- [win 1]\n\nHurdles / Blockers:\n- [blocker 1]\n\nHelp Needed:\n- [request 1]\n===================="
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "91e7a5ca-aa9a-4ba8-aa64-679e621f1917",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "EZxrTLl3QbbeXGXk",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "1299761094",
+        "text": "=✅ DPR email sent to HR successfully!\n\nYour Daily Progress Report for {{ $now.toLocaleString() }} has been formatted and sent.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        0
+      ],
+      "id": "6d26d1cf-f315-45a1-bd44-130b7399adf4",
+      "name": "Send a text message",
+      "webhookId": "dc4bce0b-2aec-4735-a4d4-10d00347d1be",
+      "credentials": {
+        "telegramApi": {
+          "id": "SGrevrsO55PCF8kq",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "simhasgit@gmail.com",
+        "subject": "=Daily Progress Report - {{ $now.toLocaleString() }}",
+        "message": "={{ $('Message a model').item.json.content.parts[0].text\n  .replace(/\\n/g, '<br>')\n  .replace(/(Work Done:|Achievements:|Hurdles \\/ Blockers:|Help Needed:|DAILY REPORT|Date:|Employee:)/g, '<strong>$1</strong>') \n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "2208a575-eb18-4618-9232-fdf916e198fc",
+      "name": "Send a message",
+      "webhookId": "7f7d00af-9e51-4287-811b-c5fcecb81776",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ccCHpRe1daRJkTaC",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0eac3166-9375-4f6b-a096-24007a5a23b5",
+      "name": "Telegram Trigger",
+      "webhookId": "dd089244-fb26-4a83-a80c-9c112934a44e",
+      "credentials": {
+        "telegramApi": {
+          "id": "SGrevrsO55PCF8kq",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "05df2aab-7467-4870-8092-95eced0146c7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0fe20e2bcf311fba4507c8f31da35d22d7bbf534a4a5c1b0af821312c323f711"
+  },
+  "id": "R8kuJ50ZtJAdPMII",
+  "tags": []
+}
